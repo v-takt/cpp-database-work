@@ -1,24 +1,40 @@
 {
-  "version": "0.2.0",
   "configurations": [
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "(gdb) Запустить",
       "type": "cppdbg",
       "request": "launch",
+      "program": "${C:/Users/barsu/Documents/cpp-database-work}/a.exe",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/barsu/Documents/cpp-database-work",
-      "program": "c:/Users/barsu/Documents/cpp-database-work/build/Debug/outDebug",
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
+      "miDebuggerPath": "/path/to/gdb",
       "setupCommands": [
         {
-          "description": "Enable pretty-printing for gdb",
+          "description": "Включить автоматическое форматирование для gdb",
           "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Задать для варианта приложения дизассемблирования значение Intel",
+          "text": "-gdb-set disassembly-flavor intel",
           "ignoreFailures": true
         }
       ]
+    },
+    {
+      "name": "(Windows) Запустить",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "Введите имя программы, например: ${workspaceFolder}/a.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "console": "externalTerminal"
     }
   ]
 }
