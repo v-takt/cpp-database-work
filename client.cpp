@@ -1,40 +1,43 @@
-#include "client.h"
-#include <cstdio>
-#include <iostream>
-#include <limits>
-#include <algorithm>
-#include <iomanip>
-#include <unordered_map>
+#include "client.h" // Подключаем заголовочный файл с определением структуры Client
+#include <cstdio> // Подключаем библиотеку для работы с файлами
+#include <iostream> // Подключаем библиотеку для ввода-вывода
+#include <limits> // Подключаем библиотеку для работы с пределами числовых типов
+#include <algorithm> // Подключаем библиотеку для использования алгоритмов
+#include <iomanip> // Подключаем библиотеку для манипуляций с форматом вывода
+#include <unordered_map> // Подключаем библиотеку для использования неупорядоченной карты
+
 
 using namespace std;
 
 // --- Функции для работы с файлами ---
 
+// Функция для чтения клиентов из файла и заполнения карты clientsMap
 void readClientsFromFile(std::unordered_map<int, Client>& clientsMap, const std::string& filename) {
-    FILE* inputFile = fopen(filename.c_str(), "r");
+    FILE* inputFile = fopen(filename.c_str(), "r"); // Открытие файла для чтения
     if (!inputFile) {
-        cerr << "Error" << filename << endl;
+        cerr << "Error" << filename << endl; // Ошибка открытия файла
         return;
     }
 
     int id, age;
-    char name[100]; // assuming the name won't exceed 99 characters
+    char name[41]; // Предполагается, что имя не превышает 41 символ
     double salary;
 
+    // Чтение данных из файла и заполнение карты clientsMap
     while (fscanf(inputFile, "%d %99s %d %lf", &id, name, &age, &salary) == 4) {
         clientsMap[id] = Client{id, string(name), age, salary};
     }
 
-    fclose(inputFile);
+    fclose(inputFile); // Закрытие файла
 }
-
+// Функция для сохранения клиентов из карты clientsMap в файл
 void saveClientsToFile(const std::unordered_map<int, Client>& clientsMap, const std::string& filename) {
-    FILE* outputFile = fopen(filename.c_str(), "w");
+    FILE* outputFile = fopen(filename.c_str(), "w"); // Открытие файла для записи
     if (!outputFile) {
-        cerr << "Error" << filename << endl;
+        cerr << "Error" << filename << endl; // Ошибка открытия файла
         return;
     }
-
+    // Запись данных из карты clientsMap в файл
     for (const auto& pair : clientsMap) {
         fprintf(outputFile, "%d %s %d %.2f\n",
                 pair.second.id,
@@ -43,11 +46,12 @@ void saveClientsToFile(const std::unordered_map<int, Client>& clientsMap, const 
                 pair.second.salary);
     }
 
-    fclose(outputFile);
+    fclose(outputFile); // Закрытие файла
 }
 
    // --- Функции меню и операций ---
 
+// Функция для отображения меню и выполнения операций с клиентами
 void menu_clients(std::unordered_map<int, Client>& clientsMap) {
        int opt;
        string search_name;
@@ -63,20 +67,20 @@ void menu_clients(std::unordered_map<int, Client>& clientsMap) {
            cout << "[5]. Exit" << endl;
            cin >> opt;
            switch (opt) {
-               case 1:     // insert
+               case 1:     // Вставка клиента
                    insert_client(clientsMap);
                    break;
-               case 2:     // read 
+               case 2:     // Чтение списка клиентов 
                    print_lst_clients(clientsMap);
                    break;
-               case 3:     // update client
+               case 3:     // Обновление клиента
                    cout << "\n*** Update Client ***" << endl;
                    cout << "\nWrite the client name to update: ";
                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистка буфера ввода
                    getline(cin, search_name); // Считывание строки с пробелами
                    update_client(search_name, clientsMap);
                    break;
-               case 4:     // delete client
+               case 4:     // Удаление клиента
                    cout << "\n*** Delete Client ***" << endl;
                    cout << "\nWrite the client name to delete: ";
                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очистка буфера ввода
@@ -93,7 +97,7 @@ void menu_clients(std::unordered_map<int, Client>& clientsMap) {
        } while (opt != 5);    
    }
 
-   // insert new client
+   // Функция для вставки нового клиента
    void insert_client(std::unordered_map<int, Client>& clientsMap) {
        cout << "\n*** Insert new Client ***" << endl;
 
@@ -128,7 +132,7 @@ void menu_clients(std::unordered_map<int, Client>& clientsMap) {
        cout << "Client successfully added.\n";
    }
  
-   // print list of clients
+// Функция для вывода списка клиентов
 void print_lst_clients(const std::unordered_map<int, Client>& clientsMap) {
     cout << "\n*** List of clients ***" << endl;
     cout << left;
@@ -141,7 +145,7 @@ void print_lst_clients(const std::unordered_map<int, Client>& clientsMap) {
     }
 }
 
-// print 1 client
+// Функция для вывода информации о одном клиенте
 void print_client(const Client& c) {
     cout << setw(10) << c.id <<
          setw(15) << c.name <<
@@ -149,7 +153,7 @@ void print_client(const Client& c) {
          setw(10) << c.salary << endl;
 }
 
-// search some client given the name
+// Функция для поиска клиента по имени
 int search_client(const std::string& search_name, const std::unordered_map<int, Client>& clientsMap) {
     for (const auto& pair : clientsMap) {
         if (pair.second.name == search_name) {
@@ -159,7 +163,7 @@ int search_client(const std::string& search_name, const std::unordered_map<int, 
     return -1; // Клиент не найден
 }
 
-// get 1 client
+// Функция для получения информации о клиенте по ID
 Client get_client(int id, const std::unordered_map<int, Client>& clientsMap) {
     auto it = clientsMap.find(id);
     if (it != clientsMap.end()) {
@@ -169,7 +173,7 @@ Client get_client(int id, const std::unordered_map<int, Client>& clientsMap) {
     }
 }
 
-// update client
+// Функция для обновления информации о клиенте
 void update_client(const std::string& search_name, std::unordered_map<int, Client>& clientsMap) {
     int id = search_client(search_name, clientsMap);
     if (id != -1) {
@@ -200,7 +204,7 @@ void update_client(const std::string& search_name, std::unordered_map<int, Clien
     }    
 }
 
-// delete client
+// Функция для удаления клиента
 void delete_client(const std::string& search_name, std::unordered_map<int, Client>& clientsMap) {
     int id = search_client(search_name, clientsMap);
     if (id != -1) {
